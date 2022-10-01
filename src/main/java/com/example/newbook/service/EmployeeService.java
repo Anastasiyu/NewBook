@@ -6,6 +6,9 @@ import com.example.newbook.exception.EmployeeStorageIsFullException;
 import com.example.newbook.model.Employee;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Service
 public class EmployeeService {
@@ -13,52 +16,47 @@ public class EmployeeService {
 
         private static final int SIZE = 5;
 
-        private final Employee[] employees;
+        private final List<Employee> employees;
 
         public EmployeeService() {
-            this.employees = new Employee[SIZE];
+            this.employees = new ArrayList<>();
         }
 
 
         public Employee add(String firstName, String lastName) {
             Employee employee = new Employee(firstName, lastName);
-            int index = -1;
-            for (int i = 0; i < employees.length; i++) {
-                if (employees[i] == null) {
-                    index = i;
-                    break;
-                }
-                if (employee.equals(employees[i])) {
-                    throw new EmployeeAlredyAddedException();
-                }
+
+            if (employees.contains(employee)) {
+                throw new EmployeeAlredyAddedException();
             }
-            if (index == -1) {
+
+            if (employees.size() >= SIZE) {
                 throw new EmployeeStorageIsFullException();
-            } else {
-                employees[index] = employee;
+            }
+            employees.add(employee);
+            return employee;
+        }
+
+    public Employee remove(String firstName, String lastName) {
+        Employee employee = new Employee(firstName, lastName);
+            if (employees.contains(employee)) {
+                employees.remove(employee);
                 return employee;
             }
-        }
+        throw new EmployeeNotFoundException();
+    }
 
-        public Employee remove(String firstName, String lastName) {
-            Employee employee = new Employee(firstName, lastName);
-            for (int i = 0; i < employees.length; i++) {
-                if (employee.equals(employees[i])) {
-                    employees[i] = null;
-                    return employee;
-                }
-            }
-            throw new EmployeeNotFoundException();
+    public Employee find(String firstName, String lastName) {
+        Employee employee = new Employee(firstName, lastName);
+        if (employees.contains(employee)) {
+            return employee;
         }
+        throw new EmployeeNotFoundException();
+    }
 
-        public Employee find(String firstName, String lastName) {
-            Employee employee = new Employee(firstName, lastName);
-            for (Employee element : employees) {
-                if (employee.equals(element)) {
-                    return employee;
-                }
-            }
-            throw new EmployeeNotFoundException();
-        }
+    public List<Employee> findAll() {
+            return  new ArrayList<>(employees);
+    }
+
     }
 
