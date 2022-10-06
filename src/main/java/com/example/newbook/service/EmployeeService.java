@@ -7,6 +7,7 @@ import com.example.newbook.model.Employee;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 
@@ -23,8 +24,11 @@ public class EmployeeService {
         }
 
 
-        public Employee add(String firstName, String lastName) {
-            Employee employee = new Employee(firstName, lastName);
+        public Employee add(String firstName,
+                            String lastName,
+                            int department,
+                            double salary) {
+            Employee employee = new Employee(firstName, lastName, department, salary);
 
             if (employees.contains(employee)) {
                 throw new EmployeeAlredyAddedException();
@@ -37,8 +41,8 @@ public class EmployeeService {
             return employee;
         }
 
-    public Employee remove(String firstName, String lastName) {
-        Employee employee = new Employee(firstName, lastName);
+    public Employee remove(String firstName, String lastName, int department, double salary) {
+        Employee employee = new Employee(firstName, lastName,department, salary);
             if (employees.contains(employee)) {
                 employees.remove(employee);
                 return employee;
@@ -46,8 +50,8 @@ public class EmployeeService {
         throw new EmployeeNotFoundException();
     }
 
-    public Employee find(String firstName, String lastName) {
-        Employee employee = new Employee(firstName, lastName);
+    public Employee find(String firstName, String lastName, int department, double salary) {
+        Employee employee = new Employee(firstName, lastName,department, salary);;
         if (employees.contains(employee)) {
             return employee;
         }
@@ -55,8 +59,11 @@ public class EmployeeService {
     }
 
     public List<Employee> findAll() {
-            return  new ArrayList<>(employees);
+        return new ArrayList<>(employees);
     }
 
+    public Collection<Employee> getALL() {
+        return null;
     }
+}
 
