@@ -12,11 +12,13 @@ public class Employee {
     private  final double salary;
 
 
+
     public Employee(String firstname, String lastName, int department, double salary) {
         this.firstname = firstname;
         this.lastName = lastName;
         this.department = department;
         this.salary = salary;
+
 
     }
 

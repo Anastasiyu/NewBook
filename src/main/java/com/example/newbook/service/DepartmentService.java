@@ -28,7 +28,7 @@ public class DepartmentService {
     public Employee findEmployeeWhithMinSalaryFromDepartment(int department) {
         return employeeService.getALL().stream()
                 .filter(employee -> employee.getDepartment() == department)
-                .max(Comparator.comparingDouble(Employee::getSalary))
+                .min(Comparator.comparingDouble(Employee::getSalary))
                 .orElseThrow(EmployeeNotFoundException::new);
     }
     
@@ -40,7 +40,7 @@ public class DepartmentService {
     }
 
     public Map<Integer, List<Employee>> findEmployees() {
-        return (Map<Integer, List<Employee>>) employeeService.getALL().stream()
+        return employeeService.getALL().stream()
                 .collect(Collectors.groupingBy(Employee::getDepartment));
     }
 }

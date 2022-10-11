@@ -6,21 +6,26 @@ import com.example.newbook.exception.EmployeeStorageIsFullException;
 import com.example.newbook.model.Employee;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 
 @Service
 public class EmployeeService {
 
 
-        private static final int SIZE = 5;
+        private static final int LIMIT = 5;
 
-        private final List<Employee> employees;
+        private final Map<String, Employee> employees = new HashMap<>();
+        private final ValidatorService validatorService;
 
-        public EmployeeService() {
-            this.employees = new ArrayList<>();
+        private String getKey(String firstName, String lastName){
+            return firstName + "|" + lastName;
+        }
+
+
+
+    public EmployeeService(ValidatorService validatorService) {
+        this.validatorService = validatorService;
         }
 
 
@@ -28,42 +33,50 @@ public class EmployeeService {
                             String lastName,
                             int department,
                             double salary) {
-            Employee employee = new Employee(firstName, lastName, department, salary);
+            Employee employee = new Employee(
+                    validatorService.validate(firstName),
+                    validatorService.validate(lastName),
+                    department,
+                    salary
+            );
 
-            if (employees.contains(employee)) {
+            String key = getKey(firstName, lastName);
+
+            if (employees.containsKey(key)) {
                 throw new EmployeeAlredyAddedException();
             }
 
-            if (employees.size() >= SIZE) {
-                throw new EmployeeStorageIsFullException();
+            if (employees.size() >= LIMIT) {
+
+                employees.put(key, employee);
+                return employee;
             }
-            employees.add(employee);
-            return employee;
+            throw new EmployeeStorageIsFullException();
         }
 
     public Employee remove(String firstName, String lastName, int department, double salary) {
-        Employee employee = new Employee(firstName, lastName,department, salary);
-            if (employees.contains(employee)) {
-                employees.remove(employee);
+        Employee employee = new Employee(firstName, lastName, department, salary);
+            if (employees.containsKey(employee)){
                 return employee;
             }
         throw new EmployeeNotFoundException();
     }
 
-    public Employee find(String firstName, String lastName, int department, double salary) {
-        Employee employee = new Employee(firstName, lastName,department, salary);;
-        if (employees.contains(employee)) {
+    public Employee find(String firstName, String lastName,int department, double salary) {
+        Employee employee = new Employee(firstName, lastName, department, salary);;
+        if (employees.containsKey(employee)) {
             return employee;
         }
         throw new EmployeeNotFoundException();
     }
 
-    public List<Employee> findAll() {
-        return new ArrayList<>(employees);
+    public Map<String, Employee> findAll() {
+        return  new HashMap<>();
     }
-
     public Collection<Employee> getALL() {
         return null;
     }
+
+
 }
 
